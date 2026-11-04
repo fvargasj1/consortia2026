@@ -37,15 +37,17 @@ function iniciarBorradorEsc() {
   });
   if (D.ec0 === D.ec1) D.ec1 = LR[(LR.findIndex(c => c.id === D.ec0) + 5) % LR.length].id;
 }
+const PREG_RONDA = 7;
+/* 7 preguntas por ronda, repartidas entre los tres recursos (3, 2 y 2), eligiendo las menos usadas y sin repetir */
 function elegirPreguntas() {
-  const rs = U.shuffle(['journals', 'books', 'srm']);
-  return rs.map(r => {
-    const pool = Object.values(S.preguntas).filter(q => q.recurso === r);
-    if (!pool.length) return null;
-    const min = Math.min.apply(null, pool.map(q => q.usos || 0));
-    const cand = pool.filter(q => (q.usos || 0) === min);
-    return cand[Math.floor(Math.random() * cand.length)].id;
-  }).filter(Boolean);
+  const rs = U.shuffle(['journals', 'books', 'srm']), out = [];
+  rs.forEach((r, i) => {
+    const n = Math.floor(PREG_RONDA / 3) + (i < PREG_RONDA % 3 ? 1 : 0);
+    const pool = U.shuffle(Object.values(S.preguntas).filter(q => q.recurso === r));
+    pool.sort((x, y) => (x.usos || 0) - (y.usos || 0));
+    pool.slice(0, n).forEach(q => out.push(q.id));
+  });
+  return U.shuffle(out);
 }
 const nombreEsc = id => (S.escuderias[id] ? S.escuderias[id].nombre : id);
 const otraEsc = (escs, id) => escs.find(e => e.id !== id);
@@ -208,8 +210,18 @@ const ACT = {
       await A.parchar('turno', null, { qi: t.qi - 1, rev: false, reveal: null, pregunta: GP.preguntaPublica(q), qInicio: new Date().toISOString() });
     } else await A.parchar('turno', null, { fase: 'registro', pregunta: null, reveal: null });
   },
+  async terminarRonda() {
+    const t = tur();
+    const clave = await pedirClave('Terminar la ronda de preguntas antes de la última pasa a registrar tiempos. Las preguntas que no se respondieron no cuentan. Escribe la clave de administrador.');
+    if (!clave) return;
+    UI.qKey = '';
+    if (!t.rev) await Promise.all(escT().map(e => { const resp = clone(e.resp || {}); delete resp[t.qi]; return A.parchar('escuderias', e.id, { resp }); }));
+    await A.parchar('turno', null, { fase: 'pista', pregunta: null, reveal: null });
+    toast('Ronda de preguntas terminada. Registra los tiempos.');
+  },
   async atrasPista() {
-    const t = tur(), qi = Math.max(0, (t.qs || []).length - 1), q = S.preguntas[t.qs[qi]];
+    const t = tur(), hecho = (t.qs || []).map((_, i) => i).filter(i => escT().some(e => e.resp && e.resp[i] && typeof e.resp[i].ok === 'boolean'));
+    const qi = hecho.length ? hecho[hecho.length - 1] : 0, q = S.preguntas[t.qs[qi]];
     UI.qKey = '';
     await A.parchar('turno', null, { fase: 'preguntas', qi, rev: true, pregunta: q ? GP.preguntaPublica(q) : null, reveal: q ? { correcta: q.correcta, dato: q.dato || '' } : null });
   },
@@ -419,7 +431,7 @@ function preguntasHTML() {
   return '<div class="qtop"><span class="qn">Pregunta ' + (t.qi + 1) + ' de ' + nq + '</span><span class="logochip">' + GP.recLogo(q.recurso) + '</span>' + (t.rev ? '' : '<span class="radio" data-radio>' + Math.ceil(rem) + '</span>') + '<div class="tots">' + tots + '</div></div>' +
     '<div class="qtext' + (long ? ' long' : '') + '">' + esc(q.texto) + '</div><div class="qopts">' + opts + '</div>' +
     (t.rev ? res + (q.dato ? '<div class="qdato"><b>Dato clave.</b> ' + esc(q.dato) + '</div>' : '') : '<div class="row">' + sinResp + '</div>') +
-    '<div class="foot"><button class="btn ghost" data-act="atrasPreg">← ' + (t.rev ? 'Cambiar respuestas' : t.qi > 0 ? 'Pregunta anterior' : 'Volver al registro') + '</button><span class="grow"></span>' +
+    '<div class="foot"><button class="btn ghost" data-act="atrasPreg">← ' + (t.rev ? 'Cambiar respuestas' : t.qi > 0 ? 'Pregunta anterior' : 'Volver al registro') + '</button>' + (t.rev && ult ? '' : '<button class="btn bad" data-act="terminarRonda">Terminar ronda de preguntas</button>') + '<span class="grow"></span>' +
     (t.rev ? '<button class="btn lg" data-act="siguiente">' + (ult ? 'Ir a la pista →' : 'Siguiente pregunta →') + '</button>' : '<button class="btn lg" data-act="revelar"' + (lista ? '' : ' disabled') + '>Revelar respuesta</button>') + '</div>';
 }
 function pistaLanesHTML() { return escT().map(e => GP.lapPanelHTML(L, e, { entry: true, draft: D['lap_' + e.id] || '' })).join(''); }
