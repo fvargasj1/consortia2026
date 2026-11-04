@@ -46,4 +46,3 @@ La guía completa, con la lista de verificación de la prueba general, está en 
 - Clave de administrador inicial: `Consortia` (mover o quitar personas de turnos cerrados y reiniciar el evento). Para cambiarla:
   `update public.secretos set valor = 'NuevaClave' where nombre = 'clave_admin';`
 - Librerías externas que cargan desde internet: `@supabase/supabase-js@2.111.0` y `qrcode-generator@1.4.4`, ambas desde jsDelivr.
-- El repositorio público expone los logos y fuentes de Sage de `assets`. Las páginas llevan `noindex`.
