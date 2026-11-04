@@ -41,18 +41,18 @@ function buscarHTML() {
   const q = String(D.reg_q || ''), toks = U.norm(q).split(/\s+/).filter(Boolean);
   const largo = toks.join('').length >= 3;
   let lista;
-  if (!largo) lista = '<p class="muted">Escribe al menos tres letras de tu nombre o de tu institución.</p>';
+  if (!largo) lista = '<p class="muted">Escribe al menos tres letras de tu nombre, tu apellido o tu institución.</p>';
   else if (UI.buscando && !UI.res) lista = '<p class="muted">Buscando…</p>';
   else if (UI.res && UI.res.length) lista = '<div class="stack">' + UI.res.map(r => '<button class="pickrow" data-act="elegir" data-id="' + esc(r.id) + '"><b>' + esc(r.nombre) + '</b><span>' + esc(r.institucion) + '</span></button>').join('') + '</div>';
-  else lista = '<p class="muted">No encontramos ese nombre.</p>';
-  return '<div class="regpage">' + intro() + '<section class="card"><h2>Busca tu nombre</h2>' + field('reg_q', 'Tu nombre o tu institución', 'text', 'autocomplete="off" autocapitalize="words"') + lista +
-    '<button class="btn ghost" data-act="nuevo">No estoy en la lista</button></section></div>';
+  else lista = '<p class="muted">No encontramos ese nombre. Revisa cómo lo escribiste o crea tu registro.</p>';
+  return '<div class="regpage">' + intro() + '<section class="card"><h2>Busca tu nombre</h2>' + field('reg_q', 'Tu nombre, apellido o institución', 'text', 'autocomplete="off" autocapitalize="words"') + lista +
+    '<button class="btn ' + (largo && !UI.buscando && UI.res && !UI.res.length ? 'acc' : 'ghost') + '" data-act="nuevo">No estoy en la lista: crear mi registro</button></section></div>';
 }
 function datosHTML() {
   const dl = '<datalist id="instlist">' + L.instituciones().map(i => '<option value="' + esc(i) + '"></option>').join('') + '</datalist>';
   const cnt = id => L.miembros(id).length;
   const opts = escT().map(e => '<label class="escpick' + (D.reg_esc === e.id ? ' on' : '') + '"' + sty(L.colOf(e)) + '><input type="radio" name="reg_esc" value="' + esc(e.id) + '" data-d="reg_esc"' + (D.reg_esc === e.id ? ' checked' : '') + '><span><b>' + esc(e.nombre) + '</b><small>' + cnt(e.id) + (cnt(e.id) === 1 ? ' persona' : ' personas') + '</small></span></label>').join('');
-  return '<div class="regpage">' + intro() + '<form class="card" id="regform" autocomplete="on"><h2>Confirma tus datos</h2>' +
+  return '<div class="regpage">' + intro() + '<form class="card" id="regform" autocomplete="on"><h2>Confirma tus datos</h2><p class="muted">Revisa tu nombre, institución y correo, y corrígelos si hace falta.</p>' +
     field('reg_nom', 'Nombre completo', 'text', 'autocomplete="name"') + field('reg_ins', 'Institución', 'text', 'list="instlist" autocomplete="organization"') + dl + field('reg_mail', 'Correo (opcional)', 'email', 'autocomplete="email" inputmode="email"') +
     '<div class="stack"><div class="lbl" id="lblesc">Elige tu escudería</div><div class="escpicks" role="radiogroup" aria-labelledby="lblesc">' + opts + '</div></div>' +
     '<p class="consent">Si dejas tu correo, aceptas que Sage lo use para enviarte información sobre los recursos presentados en este encuentro. Puedes dejarlo en blanco.</p>' +

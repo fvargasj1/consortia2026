@@ -124,7 +124,6 @@ GP.lapPanelHTML = (L, e, o) => {
 GP.jugarFinal = (mount, L, opts) => {
   opts = opts || {};
   const speed = Number(window.__GP_SPEED) > 0 ? Number(window.__GP_SPEED) : 1;
-  const reduced = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) && !window.__GP_SPEED;
   const list = L.ranking(), N = list.length;
   let raf = 0, dead = false, confT = 0;
   const H = { stop() { dead = true; cancelAnimationFrame(raf); clearTimeout(confT); window.removeEventListener('resize', onResize); } };
@@ -210,7 +209,6 @@ GP.jugarFinal = (mount, L, opts) => {
   }
 
   medir();
-  if (reduced) { pintar(tEnd + 5); podio(); return H; }
   pintar(0);
   const t0 = performance.now();
   (function paso(now) {

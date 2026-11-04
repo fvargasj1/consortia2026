@@ -56,7 +56,7 @@ function pedirClave(texto) {
 }
 function keyHTML() {
   if (!UI.key) return '';
-  return '<div class="mdl" role="dialog" aria-modal="true" aria-label="Clave de administrador"><div class="box pnl"><h3>Clave de administrador</h3><p>' + esc(UI.key.texto) + '</p>' +
+  return '<div class="mdl navy" role="dialog" aria-modal="true" aria-label="Clave de administrador"><div class="box pnl"><h3>Clave de administrador</h3><p>' + esc(UI.key.texto) + '</p>' +
     '<div class="field"><label for="f_clave">Clave</label><input id="f_clave" type="password" data-d="clave" autocomplete="off" value="' + esc(D.clave || '') + '"></div>' +
     (UI.key.err ? '<div class="warnbox">' + esc(UI.key.err) + '</div>' : '') +
     '<div class="row"><button class="btn" data-act="keyOk">Confirmar</button><button class="btn ghost" data-act="keyCancel">Cancelar</button></div></div></div>';
@@ -378,7 +378,7 @@ function modRegHTML() {
   if (!UI.modReg) return '';
   const names = '<datalist id="dirnames">' + (UI.dirList || []).slice(0, 3000).map(x => '<option value="' + esc(x.nombre) + '"></option>').join('') + '</datalist><datalist id="instlist">' + L.instituciones().map(i => '<option value="' + esc(i) + '"></option>').join('') + '</datalist>';
   const opts = escT().map(e => '<button class="pick' + (D.mod_esc === e.id ? ' on' : '') + '"' + sty(L.colOf(e)) + ' data-act="modEsc" data-esc="' + esc(e.id) + '" aria-pressed="' + (D.mod_esc === e.id) + '">' + esc(e.nombre) + '</button>').join('');
-  return '<div class="mdl" role="dialog" aria-modal="true" aria-label="Registrar persona"><div class="box pnl"><h3>Registrar persona</h3>' + names +
+  return '<div class="mdl navy" role="dialog" aria-modal="true" aria-label="Registrar persona"><div class="box pnl"><h3>Registrar persona</h3>' + names +
     field('mod_nom', 'Nombre completo', 'text', 'list="dirnames" data-fill="1"') + field('mod_ins', 'Institución', 'text', 'list="instlist"') + field('mod_mail', 'Correo (opcional)', 'email') +
     '<div class="lbl">Escudería</div><div class="row">' + opts + '</div>' +
     '<div class="row"><button class="btn" data-act="modGuardar">Agregar</button><button class="btn ghost" data-act="modCerrar">Cancelar</button></div></div></div>';
@@ -392,7 +392,7 @@ function equiposHTML() {
     const escs = turnos[n].sort((a, b) => a.orden - b.orden);
     return '<div class="turnohdr">' + (n === t.n ? 'Turno actual (' + n + '): se mueve sin clave' : 'Turno ' + n + ': pide la clave de administrador') + '</div><div class="eqgrid">' + eqCols(n, escs) + '</div>';
   }).join('') : '<div class="muted">Todavía no hay escuderías.</div>';
-  return '<div class="mdl" role="dialog" aria-modal="true" aria-label="Equipos"><div class="box pnl wide"><div class="row sp"><h3>Equipos y personas</h3><button class="btn" data-act="cerrarEquipos">Cerrar</button></div>' +
+  return '<div class="mdl navy" role="dialog" aria-modal="true" aria-label="Equipos"><div class="box pnl wide"><div class="row sp"><h3>Equipos y personas</h3><button class="btn" data-act="cerrarEquipos">Cerrar</button></div>' +
     '<p class="hintline">Si alguien quedó en la escudería equivocada, pásala a la otra. Los cambios se ven al instante en la pantalla pública.</p>' +
     (['registro', 'preguntas', 'pista'].indexOf(t.fase) >= 0 ? '<div><button class="btn sec sm" data-act="modReg">+ Registrar persona</button></div>' : '') + body + '</div></div>';
 }
@@ -482,8 +482,10 @@ function settingsHTML() {
       '<section class="card"><h2>Reiniciar</h2><div class="warnbox">Reiniciar borra registros, escuderías y vueltas, y vuelve al turno 1. El directorio y las preguntas se conservan. Pide la clave de administrador. Exporta antes los datos que necesites.</div><div><button class="btn bad sm" data-act="reiniciar">Reiniciar el evento</button></div></section>' +
       '<section class="card"><h2>Sesión</h2><p class="muted">Sesión iniciada como ' + esc((UI.user && UI.user.email) || '') + '.</p><div><button class="btn ghost sm" data-act="salir">Cerrar sesión</button></div></section></div>';
   }
-  return '<div class="app"><div class="row sp" style="padding:12px 0"><div class="brand"><img class="lg-light" src="' + LOGOS.sageNavy + '" alt="Sage" style="height:30px"><img class="lg-dark" src="' + LOGOS.sageWhite + '" alt="Sage" style="height:30px"></div><button class="btn" data-act="cerrarAjustes">Cerrar ajustes</button></div>' +
-    '<nav class="tabs">' + TABS.map(t => '<button class="tab" data-act="setTab" data-v="' + t[0] + '" aria-selected="' + (UI.setTab === t[0]) + '">' + t[1] + '</button>').join('') + '</nav>' + b + '</div>';
+  const sub = U.sepJoin([U.txt(c.evento), esc(c.lugar)]);
+  return '<header class="sethd"><div class="in"><img class="lg" src="' + LOGOS.sageWhite + '" alt="Sage"><div class="tt"><b>Ajustes</b><span>' + sub + '</span></div>' +
+    '<button class="btn" data-act="cerrarAjustes">← Volver al juego</button></div></header>' +
+    '<div class="app setapp"><nav class="tabs" aria-label="Secciones de ajustes">' + TABS.map(t => '<button class="tab" data-act="setTab" data-v="' + t[0] + '" aria-selected="' + (UI.setTab === t[0]) + '">' + t[1] + '</button>').join('') + '</nav>' + b + '</div>';
 }
 function qEditor() {
   const q = UI.qEdit, v = (k, d) => (D['qe_' + k] != null ? D['qe_' + k] : d);
@@ -546,7 +548,7 @@ function doRender() {
   U.patchInto(document.getElementById('kmdl'), keyHTML());
   U.patchInto(document.getElementById('cfull'), confirmFullHTML());
   const ovl = document.getElementById('ovl');
-  if (UI.sett) { ovl.hidden = false; U.patchInto(ovl, '<div class="sett">' + settingsHTML() + '</div>'); }
+  if (UI.sett) { ovl.hidden = false; U.patchInto(ovl, '<div class="sett navy" role="dialog" aria-modal="true" aria-label="Ajustes">' + settingsHTML() + '</div>'); }
   else { ovl.hidden = true; ovl.__last = ''; ovl.innerHTML = ''; }
   tick();
 }

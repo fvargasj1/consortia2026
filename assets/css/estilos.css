@@ -321,7 +321,6 @@ select { appearance: auto; }
 .stage .wm { position: absolute; right: calc(var(--u) * 3); bottom: calc(var(--u) * .8); font-size: calc(var(--u) * 1.4); color: var(--muted); pointer-events: none; }
 .stage .note { background: var(--pale); color: var(--navy); }
 .stage .warnbox { background: var(--bad-bg); color: var(--bad); }
-@media (prefers-reduced-motion: reduce) { .trow, .trow .bar { transition: none; } .trow.live .bar, .pulse { animation: none; } .trow.fresh::after { animation: none; } }
 @media (max-aspect-ratio: 1/1) {
   .stage { height: auto; min-height: 100vh; overflow: visible; }
   .setup, .regv, .teams, .lanes, .bv { grid-template-columns: 1fr; }
@@ -504,7 +503,6 @@ body.is-navy { background: #001A69; }
 .conf { position: absolute; inset: 0; pointer-events: none; overflow: hidden; z-index: 6; }
 .conf i { position: absolute; top: -4%; width: calc(var(--u) * 1.1); height: calc(var(--u) * 1.8); animation: caer linear infinite; opacity: .9; }
 @keyframes caer { to { transform: translateY(115vh) rotate(540deg); } }
-@media (prefers-reduced-motion: reduce) { .conf { display: none; } .podio { animation: none; } .trow.live .run .buggy { animation: none; } .trow .run { transition: none; } }
 
 /* ---- Registro (celular) ---- */
 .regpage { max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; gap: 18px; padding-block: 20px 40px;
@@ -536,3 +534,100 @@ body.is-navy { background: #001A69; }
 .sh .tt.wide .steps { flex: none; justify-content: flex-start; margin-top: calc(var(--u) * .5); gap: calc(var(--u) * .5); }
 .sh .tt.wide .st { padding: calc(var(--u) * .3) calc(var(--u) * .9); font-size: calc(var(--u) * 1.3); }
 .st.turn { color: #fff; border-color: transparent; padding-left: 0; }
+
+/* =====================================================================
+   VERSIÓN 4: ventanas emergentes y Ajustes con el mismo aspecto de la cabina.
+   Las ventanas viven fuera de .stage, así que llevan su propia escala (--u fija)
+   y los colores Navy de la plataforma.
+   ===================================================================== */
+.navy input[type=number], .navy input[type=search], .navy textarea { background: rgba(255,255,255,.08); color: #fff; border-color: var(--line); }
+.navy input::placeholder, .navy textarea::placeholder { color: #8E9FD6; }
+.navy input[type=file] { color: var(--muted); }
+
+/* --- Ventanas emergentes (clave, registrar persona, equipos) --- */
+.mdl { --u: 9px; z-index: 90; padding: 24px max(16px, env(safe-area-inset-right, 0px)) 24px max(16px, env(safe-area-inset-left, 0px)); background: rgba(0,10,40,.78); -webkit-backdrop-filter: blur(3px); backdrop-filter: blur(3px); font-size: 16px; line-height: 1.4; }
+.mdl.navy { background: rgba(0,10,40,.78); }
+.mdl .box { width: min(560px, 100%); max-height: calc(100dvh - 48px); overflow: auto; align-content: start; gap: 18px; padding: 32px; color: #fff;
+  background: #001A69; border: 1px solid var(--line); border-top: 6px solid var(--teal); box-shadow: 0 28px 70px rgba(0,0,0,.5); }
+.mdl .box.wide { width: min(1120px, 100%); padding: 32px 36px 36px; gap: 22px; }
+.mdl .box h3 { font-size: 26px; line-height: 30px; }
+.mdl .box p { font-size: 16px; line-height: 1.5; color: var(--pale); }
+.mdl .box p.hintline { font-size: 15px; color: var(--muted); }
+.mdl .field { gap: 8px; }
+.mdl .field > label, .mdl .lbl { font-size: 13px; letter-spacing: .05em; }
+.mdl input[type=text], .mdl input[type=email], .mdl input[type=password], .mdl select { min-height: 50px; padding: 10px 14px; font-size: 17px; border-width: 2px; }
+.mdl .row { gap: 12px; align-items: center; }
+.mdl .row.sp { justify-content: space-between; }
+.mdl .btn { min-height: 48px; padding: 0 22px; font-size: 16px; }
+.mdl .btn.sm { min-height: 40px; padding: 0 14px; font-size: 14px; }
+.mdl .pick { min-width: 0; min-height: 48px; padding: 0 18px; font-size: 16px; border-width: 3px; }
+.mdl .warnbox { padding: 14px 16px; font-size: 15px; }
+.mdl .turnohdr { margin-top: 6px; padding-bottom: 8px; border-bottom: 1px solid var(--line); font-size: 13px; letter-spacing: .1em; }
+.mdl .eqgrid { gap: 20px; }
+.mdl .pnl.team { padding: 20px; gap: 14px; border-top-width: 6px; }
+.mdl .eqhead b { font-size: 22px; line-height: 26px; }
+.mdl .eqhead .muted { font-size: 14px; }
+.mdl .mlist { gap: 10px; }
+.mdl .mrow { padding: 12px 14px; gap: 10px 14px; }
+.mdl .mrow .who b { font-size: 16px; line-height: 20px; }
+.mdl .mrow .who i { font-size: 13px; line-height: 18px; }
+.mdl .mrow .mv { gap: 8px; }
+.mdl .more { font-size: 14px; padding: 8px 2px; }
+@media (max-width: 560px) {
+  .mdl { padding: 12px max(12px, env(safe-area-inset-right, 0px)) 12px max(12px, env(safe-area-inset-left, 0px)); }
+  .mdl .box, .mdl .box.wide { padding: 22px 18px 24px; max-height: calc(100dvh - 24px); }
+}
+
+/* --- Ajustes: pantalla completa en Navy con cabecera como la del juego --- */
+.sett.navy { overflow-y: auto; font-size: 15px; }
+.sett .sethd { position: sticky; top: 0; z-index: 3; background: #001A69; border-bottom: 2px solid var(--line); box-shadow: 0 10px 28px rgba(0,10,40,.35); }
+.sett .sethd .in { max-width: 1240px; margin: 0 auto; display: flex; align-items: center; gap: 24px; min-width: 0;
+  padding: 14px max(24px, env(safe-area-inset-right, 0px)) 14px max(24px, env(safe-area-inset-left, 0px)); }
+.sett .sethd .lg { height: 34px; width: auto; flex: none; display: block; }
+.sett .sethd .tt { display: block; margin: 0; flex: 1 1 auto; min-width: 0; padding-left: 24px; border-left: 2px solid var(--line); }
+.sett .sethd .tt b { display: block; font-family: var(--font-display); font-size: 28px; line-height: 1.1; color: #fff; }
+.sett .sethd .tt > span { display: block; margin-top: 3px; color: var(--muted); font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sett .sethd .btn { flex: none; min-height: 46px; padding: 0 22px; font-size: 16px; }
+.sett .app.setapp { max-width: 1240px; padding-top: 32px; padding-bottom: 96px;
+  padding-left: max(24px, env(safe-area-inset-left, 0px)); padding-right: max(24px, env(safe-area-inset-right, 0px)); }
+.sett .tabs { margin: 0 0 32px; gap: 6px; }
+.sett .tab { padding: 14px 22px; font-size: 17px; }
+.sett .tab:hover { color: #fff; }
+.sett .cols { gap: 24px; }
+.sett .card { padding: 28px; gap: 18px; border-top: 5px solid var(--teal); }
+.sett .card h2 { font-size: 24px; line-height: 30px; }
+.sett .card p { line-height: 1.55; }
+.sett .card .muted { font-size: 14px; line-height: 1.5; }
+.sett .card .row { gap: 12px; }
+.sett .field { gap: 8px; }
+.sett .field > label, .sett .lbl { font-size: 13px; letter-spacing: .05em; }
+.sett input[type=text], .sett input[type=email], .sett input[type=password], .sett input[type=number], .sett select { min-height: 50px; padding: 10px 14px; font-size: 16px; border-width: 2px; }
+.sett textarea { padding: 12px 14px; border-width: 2px; line-height: 1.5; }
+.sett .grid2 { gap: 18px; }
+.sett .btn { min-height: 46px; padding: 0 22px; font-size: 16px; }
+.sett .btn.sm { min-height: 40px; padding: 0 16px; font-size: 14px; }
+.sett .note, .sett .warnbox { padding: 16px 18px; line-height: 1.5; }
+.sett .stack { gap: 14px; }
+.sett .stack + .stack { margin-top: 14px; }
+.sett .list li { padding: 14px 4px; gap: 14px; }
+.sett .card .list .grow { line-height: 1.45; }
+@media (max-width: 640px) {
+  .sett .sethd .in { gap: 14px; padding-top: 12px; padding-bottom: 12px; }
+  .sett .sethd .tt { padding-left: 14px; }
+  .sett .sethd .tt b { font-size: 22px; }
+  .sett .sethd .btn { padding: 0 14px; }
+  .sett .app.setapp { padding-top: 22px; }
+  .sett .card { padding: 20px 18px; }
+}
+.sett .card > .btn { align-self: flex-start; }
+.sett input[type=file]::file-selector-button { margin-right: 14px; padding: 9px 16px; border: 2px solid var(--line); background: transparent; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.sett input[type=file]::file-selector-button:hover { background: rgba(255,255,255,.1); }
+@media (max-width: 640px) {
+  .sett .sethd .in { gap: 12px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+  .sett .sethd .lg { height: 26px; }
+  .sett .sethd .tt { padding-left: 12px; }
+  .sett .sethd .tt > span { display: none; }
+  .sett .sethd .tt b { font-size: 20px; white-space: nowrap; }
+  .sett .sethd .btn { min-height: 42px; padding: 0 12px; font-size: 14px; }
+  .sett .app.setapp { padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+}
