@@ -37,9 +37,9 @@ function iniciarBorradorEsc() {
   });
   if (D.ec0 === D.ec1) D.ec1 = LR[(LR.findIndex(c => c.id === D.ec0) + 5) % LR.length].id;
 }
-const PREG_RONDA = 7;
 /* 7 preguntas por ronda, repartidas entre los tres recursos (3, 2 y 2), eligiendo las menos usadas y sin repetir */
 function elegirPreguntas() {
+  const PREG_RONDA = Math.min(30, Math.max(1, Math.round(Number(cfg().preguntasRonda)) || 7));
   const rs = U.shuffle(['journals', 'books', 'srm']), out = [];
   rs.forEach((r, i) => {
     const n = Math.floor(PREG_RONDA / 3) + (i < PREG_RONDA % 3 ? 1 : 0);
@@ -469,7 +469,7 @@ function settingsHTML() {
   if (UI.setTab === 'evento') {
     b = '<div class="cols"><section class="card"><h2>Evento</h2><div class="field"><label for="c_evento">Nombre del evento</label><input id="c_evento" type="text" data-chg="cfg" data-path="evento" value="' + esc(c.evento) + '"></div><p class="muted">Escribe una barra vertical (|) donde quieras el separador con la S de Sage.</p><div class="field"><label for="c_lugar">Lugar</label><input id="c_lugar" type="text" data-chg="cfg" data-path="lugar" value="' + esc(c.lugar) + '"></div>' +
       '<div class="field"><label for="c_enlace">Enlace de registro (el que lleva el QR)</label><input id="c_enlace" type="text" data-chg="cfg" data-path="enlaceRegistro" value="' + esc(c.enlaceRegistro) + '"></div><div class="row"><button class="btn sec sm" data-act="usarEnlace">Usar el enlace de este sitio</button></div><p class="muted">Debe terminar en registro.html. Es siempre el mismo enlace durante todo el evento.</p></section>' +
-      '<section class="card"><h2>Reglas</h2><div class="grid2">' + numField('bono', 'Segundos por respuesta (±)', c.bono, .5) + numField('maxVueltas', 'Vueltas por escudería', c.maxVueltas) + numField('radioSeg', 'Segundos de la cuenta regresiva', c.radioSeg) + '</div><p class="muted">Cada acierto resta y cada error suma esos segundos a la mejor vuelta de la escudería.</p></section></div>';
+      '<section class="card"><h2>Reglas</h2><div class="grid2">' + numField('bono', 'Segundos por respuesta (±)', c.bono, .5) + numField('maxVueltas', 'Vueltas por escudería', c.maxVueltas) + numField('radioSeg', 'Segundos de la cuenta regresiva', c.radioSeg) + numField('preguntasRonda', 'Preguntas por ronda', c.preguntasRonda) + '</div><p class="muted">Cada acierto resta y cada error suma esos segundos a la mejor vuelta de la escudería.</p></section></div>';
   } else if (UI.setTab === 'dir') {
     const prev = UI.dirPrev;
     b = '<div class="cols"><section class="card"><h2>Directorio de asistentes' + (UI.dirN != null ? ' (' + UI.dirN + ')' : '') + '</h2><p>Con esta lista los directores se buscan por nombre y sus datos se cargan solos. Pega una persona por línea: <b>Nombre; Institución; Correo</b> (el correo es opcional). Desde Excel puedes copiar y pegar las columnas tal cual.</p>' +

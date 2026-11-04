@@ -179,12 +179,12 @@ GP.mensajeConfig = (el, tipo) => {
 
 /* ---------- Valores por defecto y conversión fila <-> objeto ---------- */
 const DEF = {
-  config: { evento: 'Encuentro Anual de Consorcios | Consortia', lugar: 'Barranquilla', bono: 3, maxVueltas: 10, radioSeg: 20, enlaceRegistro: '', institucionesExtra: [] },
+  config: { evento: 'Encuentro Anual de Consorcios | Consortia', lugar: 'Barranquilla', bono: 3, maxVueltas: 10, radioSeg: 20, preguntasRonda: 7, enlaceRegistro: '', institucionesExtra: [] },
   turno: { n: 1, fase: 'escuderias', escIds: [], qs: [], qi: 0, rev: false, pregunta: null, reveal: null, qInicio: null, anim: 0 }
 };
 GP.DEF = DEF;
 const FROM = {
-  config: r => ({ evento: r.evento, lugar: r.lugar, bono: Number(r.bono), maxVueltas: r.max_vueltas, radioSeg: r.radio_seg, enlaceRegistro: r.enlace_registro || '', institucionesExtra: r.instituciones_extra || [] }),
+  config: r => ({ evento: r.evento, lugar: r.lugar, bono: Number(r.bono), maxVueltas: r.max_vueltas, radioSeg: r.radio_seg, preguntasRonda: r.preguntas_ronda || 7, enlaceRegistro: r.enlace_registro || '', institucionesExtra: r.instituciones_extra || [] }),
   turno: r => ({ n: r.n, fase: r.fase, escIds: r.esc_ids || [], qs: r.qs || [], qi: r.qi || 0, rev: !!r.rev, pregunta: r.pregunta || null, reveal: r.reveal || null, qInicio: r.q_inicio || null, anim: r.anim || 0 }),
   escuderias: r => ({ id: r.id, turno: r.turno, nombre: r.nombre, color: r.color, orden: r.orden || 0, resp: r.resp || {}, cerrada: !!r.cerrada, mejor: r.mejor_cs, ajuste: r.ajuste_cs, final: r.final_cs, vueltas: r.vueltas || 0, ts: Date.parse(r.creada) || 0 }),
   vueltas: r => ({ id: r.id, esc: r.esc_id, turno: r.turno, cs: r.cs, ts: Date.parse(r.ts) || 0 }),
@@ -192,7 +192,7 @@ const FROM = {
   preguntas: r => ({ id: r.id, recurso: r.recurso, modulo: r.modulo || '', texto: r.texto, opciones: r.opciones || [], correcta: r.correcta, dato: r.dato || '', usos: r.usos || 0 })
 };
 const KEYMAP = {
-  config: { maxVueltas: 'max_vueltas', radioSeg: 'radio_seg', enlaceRegistro: 'enlace_registro', institucionesExtra: 'instituciones_extra' },
+  config: { maxVueltas: 'max_vueltas', radioSeg: 'radio_seg', preguntasRonda: 'preguntas_ronda', enlaceRegistro: 'enlace_registro', institucionesExtra: 'instituciones_extra' },
   turno: { escIds: 'esc_ids', qInicio: 'q_inicio' },
   escuderias: { mejor: 'mejor_cs', ajuste: 'ajuste_cs', final: 'final_cs' },
   vueltas: { esc: 'esc_id' },
